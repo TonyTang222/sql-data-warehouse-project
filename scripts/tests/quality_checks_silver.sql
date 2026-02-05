@@ -55,10 +55,10 @@ HAVING COUNT(*) > 1 OR prd_id IS NULL;
 
 -- Check for Unwanted Spaces
 -- Expectation: No Results
-SELECT 
-    prd_nm 
+SELECT
+    prd_name
 FROM silver.crm_prd_info
-WHERE prd_nm != TRIM(prd_nm);
+WHERE prd_name != TRIM(prd_name);
 
 -- Check for NULLs or Negative Values in Cost
 -- Expectation: No Results

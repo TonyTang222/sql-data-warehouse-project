@@ -35,7 +35,7 @@ SELECT
         ELSE COALESCE(ca.gen, 'N/A')
     END AS gender,
     la.cntry AS country,
-    ci.cst_marital_status AS martial_status,
+    ci.cst_marital_status AS marital_status,
     ci.cst_create_date AS create_date
 FROM silver.crm_cust_info ci
 LEFT JOIN silver.erp_cust_az12 ca 
@@ -90,8 +90,8 @@ SELECT
     sd.sls_quantity AS quantity,
     sd.sls_price AS price
 FROM silver.crm_sales_details sd
-LEFT JOIN gold.customers_dim cu
+LEFT JOIN gold.dim_customers cu
 ON sd.sls_cust_id = cu.customer_id
-LEFT JOIN gold.products_dim pr
+LEFT JOIN gold.dim_products pr
 ON sd.sls_prd_key = pr.product_number
 GO
