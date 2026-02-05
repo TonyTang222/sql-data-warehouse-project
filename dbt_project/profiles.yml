@@ -1,0 +1,12 @@
+data_warehouse:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: 127.0.0.1
+      port: 5433
+      user: dbt_user
+      pass: dbt_pass
+      dbname: data_warehouse
+      schema: public
+      threads: 4

@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: stg_crm_cust_info
+    description: "Cleaned CRM customer information. Deduplicated by cst_id, most recent record kept."
+    columns:
+      - name: cst_id
+        description: "Customer ID (primary key after dedup)"
+        data_tests:
+          - unique
+          - not_null
+      - name: cst_key
+        description: "Customer natural key (e.g., AW00011000)"
+        data_tests:
+          - not_null
+      - name: cst_marital_status
+        data_tests:
+          - accepted_values:
+              values: ['Single', 'Married', 'N/A']
+      - name: cst_gndr
+        data_tests:
+          - accepted_values:
+              values: ['Male', 'Female', 'N/A']
+
+  - name: stg_crm_prd_info
+    description: "Cleaned CRM product information. Category ID extracted from product key."
+    columns:
+      - name: prd_id
+        data_tests:
+          - not_null
+      - name: prd_key
+        data_tests:
+          - not_null
+      - name: prd_cost
+        data_tests:
+          - not_null
+      - name: prd_line
+        data_tests:
+          - accepted_values:
+              values: ['Mountain', 'Road', 'Other sales', 'Touring', 'N/A']
+
+  - name: stg_crm_sales_details
+    description: "Cleaned CRM sales transactions. Dates converted, sales/price validated."
+    columns:
+      - name: sls_ord_num
+        data_tests:
+          - not_null
+      - name: sls_prd_key
+        data_tests:
+          - not_null
+      - name: sls_cust_id
+        data_tests:
+          - not_null
+
+  - name: stg_erp_cust_az12
+    description: "Cleaned ERP customer demographics. NAS prefix stripped from customer ID."
+    columns:
+      - name: cid
+        data_tests:
+          - not_null
+      - name: gen
+        data_tests:
+          - accepted_values:
+              values: ['Male', 'Female', 'N/A']
+
+  - name: stg_erp_loc_a101
+    description: "Cleaned ERP customer location data. Country names normalized."
+    columns:
+      - name: cid
+        data_tests:
+          - not_null
+
+  - name: stg_erp_px_cat_g1v2
+    description: "Cleaned ERP product category mapping."
+    columns:
+      - name: id
+        data_tests:
+          - unique
+          - not_null
+      - name: maintenance
+        data_tests:
+          - accepted_values:
+              values: ['Yes', 'No']

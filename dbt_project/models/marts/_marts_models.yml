@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Customer dimension. Combines CRM customer info with ERP demographics and location."
+    columns:
+      - name: customer_key
+        description: "Surrogate key"
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Natural key from CRM"
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_products
+    description: "Product dimension. Current products only (prd_end_dt is null), enriched with category."
+    columns:
+      - name: product_key
+        description: "Surrogate key"
+        data_tests:
+          - unique
+          - not_null
+      - name: product_number
+        data_tests:
+          - unique
+          - not_null
+
+  - name: fact_sales
+    description: "Sales fact table. One row per order line. References dim_customers and dim_products."
+    columns:
+      - name: order_number
+        data_tests:
+          - not_null
+      - name: customer_key
+        description: "FK to dim_customers"
+      - name: product_key
+        description: "FK to dim_products"
+      - name: sales_amount
+        data_tests:
+          - not_null
+      - name: quantity
+        data_tests:
+          - not_null
+      - name: price
+        data_tests:
+          - not_null

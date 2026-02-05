@@ -1,0 +1,71 @@
+name: 'data_warehouse'
+version: '1.0.0'
+config-version: 2
+
+profile: 'data_warehouse'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+seeds:
+  data_warehouse:
+    +schema: bronze
+    crm_cust_info:
+      +column_types:
+        cst_id: integer
+        cst_key: varchar(50)
+        cst_firstname: varchar(50)
+        cst_lastname: varchar(50)
+        cst_marital_status: varchar(50)
+        cst_gndr: varchar(50)
+        cst_create_date: date
+    crm_prd_info:
+      +column_types:
+        prd_id: integer
+        prd_key: varchar(50)
+        prd_nm: varchar(50)
+        prd_cost: integer
+        prd_line: varchar(50)
+        prd_start_dt: date
+        prd_end_dt: date
+    crm_sales_details:
+      +column_types:
+        sls_ord_num: varchar(50)
+        sls_prd_key: varchar(50)
+        sls_cust_id: integer
+        sls_order_dt: integer
+        sls_ship_dt: integer
+        sls_due_dt: integer
+        sls_sales: integer
+        sls_quantity: integer
+        sls_price: integer
+    erp_cust_az12:
+      +column_types:
+        cid: varchar(50)
+        bdate: date
+        gen: varchar(50)
+    erp_loc_a101:
+      +column_types:
+        cid: varchar(50)
+        cntry: varchar(50)
+    erp_px_cat_g1v2:
+      +column_types:
+        id: varchar(50)
+        cat: varchar(50)
+        subcat: varchar(50)
+        maintenance: varchar(50)
+
+models:
+  data_warehouse:
+    staging:
+      +schema: silver
+      +materialized: view
+    marts:
+      +schema: gold
+      +materialized: table
