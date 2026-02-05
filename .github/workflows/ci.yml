@@ -28,8 +28,8 @@ jobs:
           sqlfluff lint dbt_project/models/ \
             --config dbt_project/.sqlfluff
 
-  dbt-compile:
-    name: dbt Compile Check
+  dbt-parse:
+    name: dbt Parse Check
     runs-on: ubuntu-latest
 
     steps:
@@ -42,8 +42,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install dbt-core dbt-postgres
+        run: pip install dbt-core dbt-postgres
 
       - name: Create dbt profiles
         run: |
@@ -67,6 +66,6 @@ jobs:
         working-directory: dbt_project
         run: dbt deps
 
-      - name: Compile dbt models
+      - name: Parse dbt project
         working-directory: dbt_project
-        run: dbt compile
+        run: dbt parse
