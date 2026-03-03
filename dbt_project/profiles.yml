@@ -3,10 +3,10 @@ data_warehouse:
   outputs:
     dev:
       type: postgres
-      host: 127.0.0.1
-      port: 5433
-      user: dbt_user
-      pass: dbt_pass
-      dbname: data_warehouse
+      host: "{{ env_var('DBT_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('DBT_PORT', '5433') | int }}"
+      user: "{{ env_var('DBT_USER') }}"
+      pass: "{{ env_var('DBT_PASS') }}"
+      dbname: "{{ env_var('DBT_DBNAME', 'data_warehouse') }}"
       schema: public
       threads: 4

@@ -98,6 +98,10 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
+# Configure dbt connection
+cp .env.example .env          # then edit .env if needed
+source .env && export DBT_HOST DBT_PORT DBT_USER DBT_PASS DBT_DBNAME
+
 # Run the full pipeline
 cd dbt_project
 dbt deps --profiles-dir .
