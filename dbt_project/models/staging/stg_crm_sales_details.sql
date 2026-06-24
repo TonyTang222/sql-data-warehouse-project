@@ -1,3 +1,8 @@
+{{ config(
+    materialized='table',
+    post_hook="create index if not exists idx_{{ this.identifier }}_order_dt on {{ this }} (sls_order_dt)"
+) }}
+
 select
     sls_ord_num,
     sls_prd_key,
