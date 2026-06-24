@@ -29,5 +29,7 @@ left join {{ ref('dim_products') }} as pr
 {% if is_incremental() %}
     -- Watermark: only pick up rows newer than what's already in target.
     -- On the very first run target doesn't exist, so this block is skipped entirely.
-    where sd.sls_order_dt > (select coalesce(max(order_date), '1900-01-01') from {{ this }})
+    where sd.sls_order_dt > (
+        select coalesce(max(t.order_date), '1900-01-01') from {{ this }} as t
+    )
 {% endif %}
