@@ -1,5 +1,6 @@
 .claude/
 .DS_Store
+.vscode/
 
 # Python virtual environment
 venv/
@@ -13,3 +14,9 @@ dbt_project/profiles.yml
 
 # Environment variables
 .env
+
+# Simulator runtime state
+scripts/simulator/.sim_state.json
+
+# Personal planning notes (not for public repo)
+UPGRADE_PLAN.md
