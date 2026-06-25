@@ -20,3 +20,8 @@ scripts/simulator/.sim_state.json
 
 # Personal planning notes (not for public repo)
 UPGRADE_PLAN.md
+
+# Dagster ephemeral state from `dagster dev` (auto-generated tmp dirs + caches)
+dagster_project/.tmp_dagster_home_*/
+**/__pycache__/
+*.pyc
