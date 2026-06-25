@@ -12,4 +12,4 @@ select
         else trim(regexp_replace(cntry, E'[\r\n]', '', 'g'))
     end as cntry,
     current_timestamp as dws_create_date
-from {{ source('bronze', 'erp_loc_a101') }}
+from {{ ref('erp_loc_a101') }}

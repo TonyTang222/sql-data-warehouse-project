@@ -16,4 +16,4 @@ select
         else maintenance
     end as maintenance,
     current_timestamp as dws_create_date
-from {{ source('bronze', 'erp_px_cat_g1v2') }}
+from {{ ref('erp_px_cat_g1v2') }}

@@ -16,4 +16,4 @@ select
         else 'N/A'
     end as gen,
     current_timestamp as dws_create_date
-from {{ source('bronze', 'erp_cust_az12') }}
+from {{ ref('erp_cust_az12') }}

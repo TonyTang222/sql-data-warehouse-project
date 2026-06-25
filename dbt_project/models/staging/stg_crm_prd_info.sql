@@ -19,4 +19,4 @@ select
         else 'N/A'
     end as prd_line,
     current_timestamp as dws_create_date
-from {{ source('bronze', 'crm_prd_info') }}
+from {{ ref('crm_prd_info') }}

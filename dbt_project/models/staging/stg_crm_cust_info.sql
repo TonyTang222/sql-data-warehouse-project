@@ -5,7 +5,7 @@ with most_recent_cus as (
             partition by cst_id
             order by cst_create_date desc
         ) as rank_flag
-    from {{ source('bronze', 'crm_cust_info') }}
+    from {{ ref('crm_cust_info') }}
     where cst_id is not null
 )
 

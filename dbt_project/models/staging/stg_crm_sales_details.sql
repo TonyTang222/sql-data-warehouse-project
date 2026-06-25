@@ -34,4 +34,4 @@ select
         else sls_price
     end as sls_price,
     current_timestamp as dws_create_date
-from {{ source('bronze', 'crm_sales_details') }}
+from {{ ref('crm_sales_details') }}
