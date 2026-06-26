@@ -5,15 +5,23 @@ to any seed CSV, the sensor sees the file mtime change and launches a
 pipeline run. Pairs with the hourly schedule:
   - Sensor = primary driver (runs only when data arrived)
   - Schedule = safety net (catches missed events)
+
+Also runs a failure sensor that POSTs to Slack whenever any run fails,
+giving an audit trail for unattended pipeline runs.
 """
+import json
+import os
+import urllib.request
 from pathlib import Path
 
 from dagster import (
     DefaultSensorStatus,
+    RunFailureSensorContext,
     RunRequest,
     SensorEvaluationContext,
     SensorResult,
     SkipReason,
+    run_failure_sensor,
     sensor,
 )
 
@@ -80,3 +88,41 @@ def seed_file_sensor(context: SensorEvaluationContext) -> SensorResult:
         ],
         cursor=str(current_max_mtime),
     )
+
+
+@run_failure_sensor(
+    default_status=DefaultSensorStatus.STOPPED,
+    description="Posts a Slack alert whenever any pipeline run fails.",
+)
+def slack_failure_alert(context: RunFailureSensorContext) -> None:
+    """POST a single-line failure summary to Slack via Incoming Webhook.
+
+    Skips silently when SLACK_WEBHOOK_URL is not configured so dev runs
+    without secrets don't crash. urllib avoids pulling requests just for
+    one POST per failure.
+    """
+    webhook = os.environ.get("SLACK_WEBHOOK_URL")
+    if not webhook:
+        context.log.warning("SLACK_WEBHOOK_URL not set; skipping Slack alert.")
+        return
+
+    run = context.dagster_run
+    payload = {
+        "username": "Dagster Alert Bot",
+        "icon_emoji": ":rotating_light:",
+        "text": (
+            f":x: *Pipeline failed* — `{run.job_name}`\n"
+            f"• Run ID: `{run.run_id[:8]}`\n"
+            f"• Failure: {context.failure_event.message}"
+        ),
+    }
+    req = urllib.request.Request(
+        webhook,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            context.log.info(f"Slack alert sent (HTTP {resp.status}).")
+    except Exception as exc:  # noqa: BLE001 — never let alerting itself fail the sensor
+        context.log.error(f"Slack alert failed: {exc!r}")

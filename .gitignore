@@ -12,8 +12,12 @@ dbt_project/logs/
 dbt_project/.user.yml
 dbt_project/profiles.yml
 
+# Elementary CLI cache
+dbt_project/edr_target/
+
 # Environment variables
 .env
+.envrc
 
 # Simulator runtime state
 scripts/simulator/.sim_state.json
