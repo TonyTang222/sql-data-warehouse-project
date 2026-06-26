@@ -3,6 +3,10 @@ version: 2
 models:
   - name: dim_customers
     description: "Customer dimension. Combines CRM customer info with ERP demographics and location."
+    data_tests:
+      - elementary.volume_anomalies:
+          config:
+            severity: warn
     columns:
       - name: customer_key
         description: "Surrogate key"
@@ -17,6 +21,10 @@ models:
 
   - name: dim_products
     description: "Product dimension. Current products only (prd_end_dt is null), enriched with category."
+    data_tests:
+      - elementary.volume_anomalies:
+          config:
+            severity: warn
     columns:
       - name: product_key
         description: "Surrogate key"
@@ -30,6 +38,10 @@ models:
 
   - name: fact_sales
     description: "Sales fact table. One row per order line. References dim_customers and dim_products."
+    data_tests:
+      - elementary.volume_anomalies:
+          config:
+            severity: warn
     columns:
       - name: order_number
         data_tests:
@@ -41,9 +53,21 @@ models:
       - name: sales_amount
         data_tests:
           - not_null
+          - elementary.column_anomalies:
+              column_anomalies:
+                - null_count
+                - average
+              config:
+                severity: warn
       - name: quantity
         data_tests:
           - not_null
+          - elementary.column_anomalies:
+              column_anomalies:
+                - null_count
+                - average
+              config:
+                severity: warn
       - name: price
         data_tests:
           - not_null

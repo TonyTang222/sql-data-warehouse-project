@@ -69,3 +69,10 @@ models:
     marts:
       +schema: gold
       +materialized: table
+
+  # Elementary stores its observability metadata (model run history, test
+  # results, anomaly baselines) in a dedicated schema so it does not collide
+  # with our bronze / silver / gold layers.
+  elementary:
+    +schema: elementary
+    +materialized: table
