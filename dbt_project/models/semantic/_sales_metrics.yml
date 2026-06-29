@@ -1,0 +1,47 @@
+version: 2
+
+# Business-facing metrics. These are what analysts query via the MetricFlow
+# `mf query --metrics ...` CLI or via the dbt Semantic Layer API. By keeping
+# the formulas in YAML (not Metabase / Tableau), revenue and AOV stay
+# identical no matter which BI tool the question is asked from.
+
+metrics:
+  - name: total_revenue
+    description: "Total sales amount across all order lines (USD)."
+    label: "Total Revenue"
+    type: simple
+    type_params:
+      measure: revenue
+
+  - name: order_count
+    description: "Number of distinct orders."
+    label: "Order Count"
+    type: simple
+    type_params:
+      measure: order_count
+
+  - name: customer_count
+    description: "Distinct customers with at least one transaction."
+    label: "Active Customers"
+    type: simple
+    type_params:
+      measure: customer_count
+
+  - name: aov
+    description: "Average Order Value = revenue / order_count."
+    label: "AOV"
+    type: ratio
+    type_params:
+      numerator: total_revenue
+      denominator: order_count
+
+  - name: revenue_per_customer
+    description: "Revenue per active customer (a.k.a. ARPC)."
+    label: "Revenue / Customer"
+    type: derived
+    type_params:
+      expr: revenue / customer_count
+      metrics:
+        - name: total_revenue
+          alias: revenue
+        - name: customer_count

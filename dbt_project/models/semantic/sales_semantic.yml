@@ -1,0 +1,56 @@
+version: 2
+
+semantic_models:
+  - name: sales
+    description: "Order-line grain. One row per (order_number, product_key) — matches fact_sales."
+    model: ref('fact_sales')
+
+    # Tells MetricFlow which dimension to use when a metric is requested
+    # without an explicit time grouping.
+    defaults:
+      agg_time_dimension: order_date
+
+    # Entities: how MetricFlow joins this fact to dim_customers / dim_products.
+    # The composite primary key matches the fact grain; the foreign keys let
+    # MetricFlow auto-join when a metric is sliced by a dim attribute.
+    entities:
+      - name: order_line
+        type: primary
+        expr: order_number || '-' || product_key::text
+      - name: customer
+        type: foreign
+        expr: customer_key
+      - name: product
+        type: foreign
+        expr: product_key
+
+    # Dimensions we expect analysts to group / filter by.
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+
+    # Measures: building blocks for metrics. A measure is a raw aggregation;
+    # the metric layer below combines / wraps these for business use.
+    measures:
+      - name: revenue
+        description: "Total sales amount (USD)."
+        expr: sales_amount
+        agg: sum
+      - name: order_count
+        description: "Distinct order_number — one customer can have many products in one order."
+        expr: order_number
+        agg: count_distinct
+      - name: customer_count
+        description: "Distinct customer_key — customers with at least one transaction."
+        expr: customer_key
+        agg: count_distinct
+      - name: total_quantity
+        description: "Total units sold."
+        expr: quantity
+        agg: sum
+      - name: order_line_count
+        description: "Row count of fact_sales."
+        expr: 1
+        agg: sum
