@@ -66,35 +66,22 @@ business metrics, and Tableau consuming.
 ## Quick Start
 
 ```bash
-# 1. Start Postgres
-docker compose up -d
-#    Postgres on :5433
+# 1. First-time setup (docker + venv + python deps + dbt deps)
+make setup
+cp .env.example .env && direnv allow .   # then edit credentials
 
-# 2. Set up Python environment
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+# 2. Build the full pipeline (seeds + models + snapshot + tests)
+make build
 
-# 3. Load credentials (direnv recommended)
-cp .env.example .env       # then edit if needed
-direnv allow .
+# 3. Push any pending Elementary alerts to Slack + generate HTML report
+make observability
+make report
 
-# 4. Build the full pipeline
-cd dbt_project
-dbt deps --profiles-dir .
-dbt build --profiles-dir .       # seeds + models + snapshot + tests
-
-# 5. Run the daily-ingestion simulator + observe
-python scripts/simulator/simulate_daily_ingestion.py
-edr monitor --profiles-dir . --slack-webhook "$SLACK_WEBHOOK_URL"
-edr report  --profiles-dir .      # generates HTML observability dashboard
-
-# 6. Query metrics through the Semantic Layer
-mf query --metrics total_revenue
-mf query --metrics aov --group-by metric_time__year
-
-# 7. Open Dagster UI for orchestration
-cd ../dagster_project && dagster dev    # :3000
+# 4. Open Dagster UI for orchestration
+make dagster                              # :3000
 ```
+
+Run `make help` for the full list of targets.
 
 ---
 
