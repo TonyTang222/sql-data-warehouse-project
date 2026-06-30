@@ -28,9 +28,31 @@ jobs:
           sqlfluff lint dbt_project/models/ \
             --config dbt_project/.sqlfluff
 
-  dbt-parse:
-    name: dbt Parse Check
+  dbt-build:
+    name: dbt Build (seeds + models + snapshot + tests)
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dbt_user
+          POSTGRES_PASSWORD: dbt_pass
+          POSTGRES_DB: data_warehouse
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dbt_user -d data_warehouse"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DBT_HOST: localhost
+      DBT_PORT: 5432
+      DBT_USER: dbt_user
+      DBT_PASS: dbt_pass
+      DBT_DBNAME: data_warehouse
 
     steps:
       - name: Checkout code
@@ -41,31 +63,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install dbt
         run: pip install dbt-core dbt-postgres
-
-      - name: Create dbt profiles
-        run: |
-          mkdir -p ~/.dbt
-          cat > ~/.dbt/profiles.yml << 'EOF'
-          data_warehouse:
-            target: ci
-            outputs:
-              ci:
-                type: postgres
-                host: localhost
-                user: postgres
-                password: postgres
-                port: 5432
-                dbname: postgres
-                schema: public
-                threads: 4
-          EOF
 
       - name: Install dbt packages
         working-directory: dbt_project
-        run: dbt deps
+        run: dbt deps --profiles-dir .
 
-      - name: Parse dbt project
+      - name: dbt build
         working-directory: dbt_project
-        run: dbt parse
+        run: dbt build --profiles-dir . --target dev

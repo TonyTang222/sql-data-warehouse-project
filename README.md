@@ -4,6 +4,7 @@ End-to-end analytics platform integrating CRM and ERP sales data
 into a Star Schema gold layer, then exposed through a semantic
 layer and an interactive Tableau dashboard.
 
+[![CI](https://github.com/TonyTang222/sql-data-warehouse-project/actions/workflows/ci.yml/badge.svg)](https://github.com/TonyTang222/sql-data-warehouse-project/actions/workflows/ci.yml)
 ![dbt](https://img.shields.io/badge/dbt-1.11-FF694A?logo=dbt&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Dagster](https://img.shields.io/badge/Dagster-1.13-654FF0?logo=dagster&logoColor=white)
